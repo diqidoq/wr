@@ -1,9 +1,8 @@
-# wr
-A utility to manage distraction free writing in terminal.
+# wr - A utility to manage distraction free writing in terminal.
 
 This terminal utility will help and simplify the start up process for writing in a nice terminal mode and saves the work distraction free under given date/time/type. This is useful for out of the way notes.
 
-(c) 2016, author: Digidog (aka. diqidoq) in courtesy of maroqqo.com. This program is free software released under the GPL v3 License.
+© 2016 | author: Digidog (aka. diqidoq), in courtesy of maroqqo.com. This program is free software released under the GPL v3 License.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
