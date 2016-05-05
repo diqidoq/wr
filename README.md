@@ -11,8 +11,8 @@ Help
 ----
 On first run of wr it will ask you to provide a default SOURCE / TARGET path.
 
-ERROR: <directory> seems not to be where it was expected, or it is not mounted.
-SOLUTION: Make sure that the paths of your provided SOURCE and TARGET directories really exist. Some usb devices have other mount points in your system than you would expect. Test your expected mount paths if this error occures.
+ + ERROR: `<directory>` seems not to be where it was expected, or it is not mounted.
+ + SOLUTION: Make sure that the paths of your provided SOURCE and TARGET directories really exist. Some usb devices have other mount points in your system than you would expect. Test your expected mount paths if this error occures.
 
 Commands
 --------
