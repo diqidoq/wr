@@ -1,4 +1,7 @@
-# wr - A utility to manage distraction free writing in terminal.
+About
+-----
+
+The terminal command `wr` is a utility to manage distraction free writing in terminal.
 
 This terminal utility will help and simplify the start up process for writing in a nice terminal mode and saves the work distraction free under given date/time/type. This is useful for out of the way notes.
 
