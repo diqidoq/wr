@@ -1,0 +1,99 @@
+#!/bin/bash
+# wr - utility to manage distraction free writing in terminal
+
+
+# (c) 2016, author: Digidog (aka. diqidoq) in courtesy of MAROQQO digital media
+# This program is free software released under the GPL v3 License
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+function Help(){
+  cat << EOF
+
+wr - utility to manage distraction free writing in terminal
+-----------------------------------------------------------
+This terminal utility will help and simplify the start up process for writing in a nice terminal mode and saves the work distraction free under given date/time/type. This is useful for out of the way notes.
+
+(c) 2016, author: Digidog (aka. diqidoq) in courtesy of maroqqo.com. This program is free software released under the GPL v3 License
+
+Files:
+~/share/wr/wr
+~/share/wr/README.md
+~/share/wr/LICENSE
+~/.config/.wr/config.cfg
+~/.config/.wr/config.cfg.{DATE}.bkp (if -d has been used)
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+HELP
+----
+
+On first run of wr it will ask you to provide a default SOURCE / TARGET path.
+
+ERROR: <directory> seems not to be where it was expected, or it is not mounted.
+SOLUTION: Make sure that the paths of your provided SOURCE and TARGET directories really exist. Some usb devices have other mount points in your system than you would expect. Test your expected mount paths if this error occures.
+
+Commands
+--------
+
+wr                 starts wr for fastly start writing (only asks about type of document)
+wr -h | --help     prints help
+wr -d              reconfigures SOURCE and TARGET path
+wr -n | --name     will start wr with given document, leads thru steps to help find it
+
+EOF
+  }
+
+OS=$(uname -s)
+DSTAMP="$(date +%y%m%d_%H%M%S)"
+
+CONFIG_DIR="$HOME/.config/.wr"
+CONFIG_FILE_PATH="$CONFIG_DIR/config.cfg"
+
+SOURCE=""
+
+function ReadConfig(){
+  echo "Reading config...." >&2
+  source "$1"
+  if [ "$SOURCE" != "$TARGET" ] ; then
+    echo "Config setting for the source dir is '$SOURCE'" >&2
+    echo "Config setting for the target dir is '$TARGET'" >&2
+  else
+    printf "WARNING: SOURCE and TARGET are exactly the same! cpcam will quit. Please use <cpcam -d> to setup new directories."
+    exit 1
+  fi
+}
+
+
+
+function GetType(){
+  read -p "Note or Manuscript? [1|2]: " TYPE
+  if [ $TYPE == "1" ] ; then TYPE="Note" ; else TYPE="Manuscript" ; fi
+  
+  return $TYPE
+  }
+
+case $1 in
+  --h|--help)
+    Help
+    ;;
+  -f|--file)
+    GetType
+    echo $(ls -ahl $TYPE
+  
+
+esac
+
+
+xterm -fa "Liberation Mono:size=12:antialias=true" -mb -nb 20 -b 100 -fullscreen -fg rgb:00/00/00 -bg rgb:C0/C0/C0 -e vim -c 'startinsert' ~/Documents/${TYPE}s/$(date +%y-%m-%d_%H-%M-%S).md &
