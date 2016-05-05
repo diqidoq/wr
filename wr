@@ -147,7 +147,7 @@ case $1 in
     echo $(ReturnActiveDir $TYPE)
     echo -e "$(ls -ahl $(ReturnActiveDir $TYPE))"
     read -e -p "Type (choose) the name of file from your choosen $TYPE directory file list above and press <enter>: " FILE
-    xterm -fa "Liberation Mono:size=12:antialias=true" -mb -nb 20 -b 100 -fullscreen -fg rgb:00/00/00 -bg rgb:C0/C0/C0 -e vim -c 'startinsert' $(ReturnActiveDir $TYPE)/${FILE}
+    xterm -fa "Liberation Mono:size=12:antialias=true" -mb -nb 20 -b 100 -fullscreen -fg rgb:00/00/00 -bg rgb:C0/C0/C0 -e vim $(ReturnActiveDir $TYPE)/${FILE} &
     ;;
   -d|--dir) # Runs directory set up to create new file directories for NOTES and DRAFTS.
     LoadConfig
