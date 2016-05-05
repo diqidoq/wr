@@ -7,9 +7,8 @@ This terminal utility will help and simplify the start up process for writing in
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-HELP
+Help
 ----
-
 On first run of wr it will ask you to provide a default SOURCE / TARGET path.
 
 ERROR: <directory> seems not to be where it was expected, or it is not mounted.
@@ -17,8 +16,7 @@ SOLUTION: Make sure that the paths of your provided SOURCE and TARGET directorie
 
 Commands
 --------
-
-wr                 starts wr for fastly start writing (only asks about type of document)
-wr -h | --help     prints help
-wr -d              reconfigures SOURCE and TARGET path
-wr -n | --name     will start wr with given document (choose dialoque)
+    wr                 starts wr for fastly start writing (only asks about type of document)
+    wr -h | --help     prints help
+    wr -d              reconfigures SOURCE and TARGET path
+    wr -n | --name     will start wr with given document (choose dialoque)
