@@ -18,82 +18,153 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+APP="wr"
+CONFIG="config.cfg"
+OS=$(uname -s)
+DSTAMP="$(date +%y%m%d_%H%M%S)"
+CONFIG_DIR="$HOME/.config/$APP"
+CONFIG_FILE_PATH="$CONFIG_DIR/$CONFIG"
+# reset paths (use config.cfg instead)
+NOTES=""
+DRAFTS=""
+
+if hash vim 2>/dev/null ; then
+
 function Help(){
   cat << EOF
 
-wr - utility to manage distraction free writing in terminal
------------------------------------------------------------
+$APP - A utility to manage distraction free writing in terminal
+-------------------------------------------------------------
 This terminal utility will help and simplify the start up process for writing in a nice terminal mode and saves the work distraction free under given date/time/type. This is useful for out of the way notes.
 
 (c) 2016, author: Digidog (aka. diqidoq) in courtesy of maroqqo.com. This program is free software released under the GPL v3 License
 
 Files:
-~/share/wr/wr
-~/share/wr/README.md
-~/share/wr/LICENSE
-~/.config/.wr/config.cfg
-~/.config/.wr/config.cfg.{DATE}.bkp (if -d has been used)
+~/share/$APP/$APP
+~/share/$APP/README.md
+~/share/$APP/LICENSE
+$CONFIG_FILE_PATH
+%CONFIG_FILE_PATH.{DATE}.bkp (if -d has been used)
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 HELP
 ----
 
-On first run of wr it will ask you to provide a default SOURCE / TARGET path.
+On first run of wr it will ask you to provide a default NOTES / DRAFTS path.
 
 ERROR: <directory> seems not to be where it was expected, or it is not mounted.
-SOLUTION: Make sure that the paths of your provided SOURCE and TARGET directories really exist. Some usb devices have other mount points in your system than you would expect. Test your expected mount paths if this error occures.
+SOLUTION: Make sure that the paths of your provided NOTES and DRAFTS directories really exist. Some usb devices have other mount points in your system than you would expect. Test your expected mount paths if this error occures.
 
 Commands
 --------
 
-wr                 starts wr for fastly start writing (only asks about type of document)
-wr -h | --help     prints help
-wr -d              reconfigures SOURCE and TARGET path
-wr -n | --name     will start wr with given document, leads thru steps to help find it
+$APP                 starts wr for fastly start writing (only asks about type of document)
+$APP -h | --help     prints help
+$APP -d              reconfigures NOTES and DRAFTS path
+$APP -n | --name     will start wr with given document (choose dialoque)
 
 EOF
   }
 
-OS=$(uname -s)
-DSTAMP="$(date +%y%m%d_%H%M%S)"
-
-CONFIG_DIR="$HOME/.config/.wr"
-CONFIG_FILE_PATH="$CONFIG_DIR/config.cfg"
-
-SOURCE=""
-
-function ReadConfig(){
-  echo "Reading config...." >&2
-  source "$1"
-  if [ "$SOURCE" != "$TARGET" ] ; then
-    echo "Config setting for the source dir is '$SOURCE'" >&2
-    echo "Config setting for the target dir is '$TARGET'" >&2
+function LoadConfig(){
+  if [ -e "$CONFIG_FILE_PATH" ] ; then
+    ReadConfig "$CONFIG_FILE_PATH"
   else
-    printf "WARNING: SOURCE and TARGET are exactly the same! cpcam will quit. Please use <cpcam -d> to setup new directories."
-    exit 1
+    InitConfig
   fi
 }
 
+# Read configuration file from function call with argument file
+function ReadConfig(){
+  echo "Reading config...." >&2
+  . "$1"
+  if [ "$NOTES" != "$DRAFTS" ] ; then
+    printf "Config setting for the source dir for NOTES is '$NOTES'.\n" >&2
+    printf "Config setting for the source dir for DRAFTS is '$DRAFTS'.\n" >&2
+  else
+    printf "WARNING: source dir of NOTES and DRAFTS are exactly the same!\n"
+  fi
+}
 
+function InitConfig(){
+  printf "There isn't a config file yet.\n
+  $APP will create it for you under $CONFIG_DIR and will start config set up now and write it in $CONFIG_FILE_PATH.\n
+  Please enter NOTES and DRAFTS path you want to use.\n"
+  mkdir -p "$CONFIG_DIR"
+  touch "$CONFIG_FILE_PATH"
+  SetDir
+}
 
-function GetType(){
-  read -p "Note or Manuscript? [1|2]: " TYPE
-  if [ $TYPE == "1" ] ; then TYPE="Note" ; else TYPE="Manuscript" ; fi
+function SetDir(){
+  read -e -p "NOTES path: " NOTES
+  CheckDir $NOTES
+  read -e -p "DRAFTS path: " DRAFTS
+  CheckDir $DRAFTS
+  echo "NOTES=$NOTES" > "$CONFIG_FILE_PATH"
+  echo "DRAFTS=$DRAFTS" >> "$CONFIG_FILE_PATH"
+  printf "Setup finished. You can simply type <$APP> now to start a write process.\n"
+}
+
+function CheckDir(){
+  local SetDir_REPLY
+  if [ ! -d "$1" ] ; then
+    read -e -p "Entered $1 path or directory seems not to exist yet, do you want to create it? <y/n>: " SetDir_REPLY
+    if [ "$SetDir_REPLY" == "y" ] || [ "$SetDir_REPLY" == "yes" ] ; then
+      mkdir -p "$1"
+      printf "Directory $1 has been created.\n"
+    else
+      echo "You choose [n]o. $APP will reopen -d (set up directory) dialoque now for you again. You can break up with CTRL C.\n"
+      SetDir
+    fi
+  fi
+  }
   
-  return $TYPE
+function ReturnActiveDir(){
+  if [ "$1" == "NOTES" ] ; then DIR=${NOTES} ; else DIR=${DRAFTS} ; fi
+  echo $DIR
+  unset DIR
   }
 
-case $1 in
-  --h|--help)
-    Help
-    ;;
-  -f|--file)
-    GetType
-    echo $(ls -ahl $TYPE
-  
+function GetType(){
+  local wrTYPE
+  read -e -p "Note or Draft? [1|2]: " wrTYPE
+  if [ "$wrTYPE" == "1" ] ; then wrTYPE="NOTES" ; else wrTYPE="DRAFTS" ; fi
+  echo $wrTYPE
+  unset wrTYPE
+}
 
+case $1 in
+  '')
+    LoadConfig
+    TYPE=$(GetType)
+    CheckDir $(ReturnActiveDir $TYPE)
+    xterm -fa "Liberation Mono:size=12:antialias=true" -mb -nb 20 -b 100 -fullscreen -fg rgb:00/00/00 -bg rgb:C0/C0/C0 -e vim -c 'startinsert' $(ReturnActiveDir $TYPE)/$(date +%y-%m-%d_%H-%M-%S).md &
+    ;;
+  -f|--file) # uses given file by name instead of creating a new file.
+    LoadConfig
+    TYPE=$(GetType)
+    CheckDir $(ReturnActiveDir $TYPE)
+    echo $(ReturnActiveDir $TYPE)
+    echo -e "$(ls -ahl $(ReturnActiveDir $TYPE))"
+    read -e -p "Type (choose) the name of file from your choosen $TYPE directory file list above and press <enter>: " FILE
+    xterm -fa "Liberation Mono:size=12:antialias=true" -mb -nb 20 -b 100 -fullscreen -fg rgb:00/00/00 -bg rgb:C0/C0/C0 -e vim -c 'startinsert' $(ReturnActiveDir $TYPE)/${FILE}
+    ;;
+  -d|--dir) # Runs directory set up to create new file directories for NOTES and DRAFTS.
+    LoadConfig
+    if [ -f "$CONFIG_FILE_PATH" ] ; then cp "$CONFIG_FILE_PATH" "$CONFIG_FILE_PATH.$DSTAMP.bkp" ; fi
+		SetDir
+		exit 1
+    ;;
+  -h|--help|*) # prints help dialoque.
+    Help
+    exit 1
+    ;;
 esac
 
+else
+  read -e -p "Linux terminal editor <vim> is required. do you want to install it? <y/n>: " YN
+  if [ "$YN" == "y" ] ; then sudo apt-get update && sudo apt-get install vim -y ; else exit 0 ; fi
+fi
 
-xterm -fa "Liberation Mono:size=12:antialias=true" -mb -nb 20 -b 100 -fullscreen -fg rgb:00/00/00 -bg rgb:C0/C0/C0 -e vim -c 'startinsert' ~/Documents/${TYPE}s/$(date +%y-%m-%d_%H-%M-%S).md &
+exit 0
